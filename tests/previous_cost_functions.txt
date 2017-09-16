@@ -1,0 +1,53 @@
+    def gaus_cost(self, para):
+        xstd,ystd,angle, xs, ys = para 
+        ker = self.gaussian(xstd,ystd,angle,True)                              
+        conved = signal.fftconvolve(self.H_data, ker, mode='same')
+        # remove the cloud pixel
+        conved_masked = ma.array(conved, mask=self.bad_pixs)
+        cos = self.cost(xs=xs, ys=ys, conved_masked=conved_masked)
+        
+        
+        '''
+        x_ind, y_ind = (self.patch_s2_ind[0]+xs).astype(int), (self.patch_s2_ind[1]+ys).astype(int)
+        mask = np.logical_and.reduce((((x_ind>0),
+                                      (x_ind<self.patch[3]),
+                                      (y_ind>0),
+                                      (y_ind<self.patch[2]),
+                                      (self.patch_qa<1))))
+
+        sb12, mb12 = conved_masked[x_ind[mask], y_ind[mask]], self.patch_mod[mask]
+        this_final_mask = mb12.mask|sb12.mask
+        m_fed, s_fed = self.slop*mb12[~this_final_mask]+self.off, sb12[~this_final_mask]*0.0001
+        try:
+            r = scipy.stats.linregress(m_fed, s_fed)
+            cost = abs(1-r.rvalue)
+        except:
+            # no value can be used for regression, i.e. without high quality pixels
+            cost = 100000000000'''
+        
+        return cos
+      
+    def shift_cost(self, shifts):
+        xs, ys = shifts
+        conved_masked = ma.array(self.conved, mask=self.bad_pixs)
+        cos = self.cost(xs=xs, ys=ys, conved_masked=conved_masked)
+        
+        '''
+        x_ind, y_ind = (self.patch_s2_ind[0]+xs).astype(int), (self.patch_s2_ind[1]+ys).astype(int)
+        mask = np.logical_and.reduce((((x_ind>0),
+                                      (x_ind<self.patch[3]),
+                                      (y_ind>0),
+                                      (y_ind<self.patch[2]),
+                                      (self.patch_qa<1))))
+
+        sb12, mb12 = conved_masked[x_ind[mask], y_ind[mask]], self.patch_mod[mask]
+        this_final_mask = mb12.mask|sb12.mask
+        m_fed, s_fed = self.slop*mb12[~this_final_mask]+self.off, sb12[~this_final_mask]*0.0001
+        try:
+            r = scipy.stats.linregress(m_fed, s_fed)
+            cost = abs(1-r.rvalue)
+        except:
+            # no value can be used for regression, i.e. without high quality pixels
+            cost = 100000000000'''
+            return cos
+
